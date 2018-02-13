@@ -9,19 +9,22 @@ HOSTLIST=""
 
 #echo "LOGICAL=$LOGICAL"
 
-if [ -f $HOSTFILE ] 
+if [ -f $HOSTFILE ];
 then
  while read line           
  do           
+   #echo LINE="$line"
    arr=(`echo ${line}`);
    if [ "$LOGICAL" = "LOGICAL" ];
     then
       for i in `seq 1 ${arr[1]}`;
       do
         HOSTLIST="$HOSTLIST"${arr[0]}":cpus=1 "
+	#echo "i=$i"
       done  
     else  
      HOSTLIST="$HOSTLIST"${arr[0]}":cpus="${arr[1]}" "
+    #echo "$HOSTLIST"
     fi
    #echo $HOSTLIST
  done <$HOSTFILE

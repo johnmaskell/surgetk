@@ -17,8 +17,9 @@ MANY="false"
 PE="impi2"
 CORES="1"
 #MACHINES="1"
+TAG="*.sw"
 
-#--- SET OTHERS ---ls
+#--- SET OTHERS ---
 
 #--- IMPORT FUNCTIONS
 
@@ -30,19 +31,19 @@ usage(){
  echo 
  echo "-----------------------------------------------------------------------------------------"
  echo
- echo "Script to Mike FemEngineHD on all *.m21fm input files in local Directory through the Grid"
- echo "Default behaviour is to run all *.m21fm input files found in Current Directory."
+ echo "Script to Mike FemEngineHD on all $TAG input files in local Directory through the Grid"
+ echo "Default behaviour is to run all $TAG input files found in Current Directory."
  echo "Individual input files can be specific with the --input option below"	
  echo "Default bevahiour is to create individual Grid Engine Submission Scripts *.sge.sh"
 # echo "Grid Engine Submission script can be created with option -subscript"
  echo ""
- echo "Usage run_surge_MIKE_FemEngineHD.sh -options"
+ echo "Usage run_surge_MIKE_FemEngineSW.sh -options"
  echo "Required Options:"
  echo " --mem please specifiy the maximum memory required per process"
  echo " -P Choose Project"
  echo ""
  echo "Optional Options:"
- echo " --input specify an invidivual *.m21fm input file"
+ echo " --input specify an invidivual $TAG input file"
  echo " -n number of cores requested per job(default=1)"
 # echo " -m number of machines requested n must be divisble by m (default=1)"
  echo " -q specify the queue to submit to default = $QUEUE"
@@ -51,8 +52,8 @@ usage(){
  echo " --pe specify parallel enviroment, options below :"
  echo " 	impi2 - fill up Intel MPI (default)"
  echo "         impi - round robin Intel MPI"
- echo "         smp - Shared memory Implementation (all cores on same machine)"
- echo " --many Create a Submission script for each individual *.m21fm input file"
+ echo "         smp - Shared memory Implementation"
+ echo " --many Create a Submission script for each individual $TAG input file"
  echo " --email Email me when the job is completed"
  echo " --help/-h display this help"
  exit 1
@@ -106,7 +107,7 @@ if [ ! "$INPUT_FILE" == "" ]; then
  fi
  INPUT_LIST=("$INPUT_FILE") 
 else
- for INPUT_FILE in *.m21fm; do
+ for INPUT_FILE in $TAG; do
   if [ ! "$INPUT_LIST" == "" ]; then
    INPUT_LIST=("${INPUT_LIST[@]}" "$INPUT_FILE")
   else
@@ -116,7 +117,7 @@ else
 fi
 
 echo "INPUT_LIST=${INPUT_LIST[@]}"
-echo "EMAIL=$EMAIL"
+echo "EMAIL=$EMAIL"6
 echo "MANY=$MANY"
 echo "RUN=$RUN"
 echo "QUEUE=$QUEUE"
@@ -222,9 +223,9 @@ if [ "$MANY" = "true" ] || [ "$#{INPUT_LIST[@]}" = "1" ]; then
   
   echo >>$SGE_SH "echo \"Running \${INPUT_LIST[\$SGE_TASK_ID-1]}\""
   if [[ $PE = *"impi"* ]]; then
-   CMD_EXE="time eval mpirun -bootstrap sge -machinefile hostfile.dat -n $CORES FemEngineHD \${INPUT_LIST[\$SGE_TASK_ID-1]}"
+   CMD_EXE="time eval mpirun -bootstrap sge -machinefile hostfile.dat -n $CORES FemEngineSW \${INPUT_LIST[\$SGE_TASK_ID-1]}"
   else
-   CMD_EXE="time eval mpirun -n $CORES FemEngineHD \${INPUT_LIST[\$SGE_TASK_ID-1]}"
+   CMD_EXE="time eval mpirun -n $CORES FemEngineSW \${INPUT_LIST[\$SGE_TASK_ID-1]}"
   fi
   #CMD_EXE="FemEngineHD \${INPUT_LIST[\$SGE_TASK_ID-1]}"
   echo >>$SGE_SH 
